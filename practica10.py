@@ -1,10 +1,8 @@
-# Definir una clase para representar un libro
 class Libro:
     def __init__(self, id, titulo):
         self.id = id
         self.titulo = titulo
 
-# Función para agregar un libro a la biblioteca
 def agregar_libro(biblioteca):
     titulo = input("Ingrese el título del libro: ")
     id = len(biblioteca) + 1
@@ -12,7 +10,6 @@ def agregar_libro(biblioteca):
     biblioteca.append(libro)
     print("Libro agregado con éxito.")
 
-# Función para eliminar un libro de la biblioteca
 def eliminar_libro(biblioteca):
     titulo = input("Ingrese el título del libro a eliminar: ")
     for libro in biblioteca:
