@@ -1,69 +1,113 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+  int data;
+  struct Node* prev;
+  struct Node* next;
+};
+
+struct Node* createNode(int data) {
+  struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+  newNode->data = data;
+  newNode->prev = NULL;
+  newNode->next = NULL;
+  return newNode;
+}
+
+void insertEnd(struct Node** head, int data) {
+  struct Node* newNode = createNode(data);
+  if (*head == NULL) {
+    *head = newNode;
+    (*head)->next = newNode;
+    (*head)->prev = newNode;
+  } else {
+    struct Node* last = (*head)->prev;
+    last->next = newNode;
+    newNode->prev = last;
+    newNode->next = *head;
+    (*head)->prev = newNode;
+  }
+}
+
+void deleteNode(struct Node** head, int key) {
+  if (*head == NULL) {
+    printf("La lista esta vacia!\n");
+    return;
+  }
+  struct Node* current = *head;
+  int deleted = 0;
+  do {
+    if (current->data == key) {
+      if (current == *head) {
+        *head = current->next;
+      }
+      current->prev->next = current->next;
+      current->next->prev = current->prev;
+      free(current);
+      deleted = 1;
+      printf("%d se ha borrado en la estructura!\n", key);
+      break;
+    }
+    current = current->next;
+  } while (current != *head);
+  if (!deleted) {
+    printf("%d no se ha encontrado en la estructura!\n", key);
+  }
+}
+
+void printList(struct Node* head) {
+  if (head == NULL) {
+    printf("La lista esta vacia!\n");
+    return;
+  }
+  printf("Mostrando estructura:\n");
+  struct Node* current = head;
+  do {
+    printf("%d --> ", current->data);
+    current = current->next;
+  } while (current != head);
+  printf("\n");
+}
 
 int main() {
-    // Declaración de variables
-    int opcion, subopcion, valor, posicion, i, suma = 0;
-    int conjunto[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+  struct Node* head = NULL;
 
-    // Menú de opciones
-    printf("Seleccione la operación a realizar:\n");
-    printf("1. Sumar todos los valores del conjunto\n");
-    printf("2. Restar el valor de una posición dada\n");
-    printf("3. Añadir un valor en una posición dada\n");
-    printf("4. Eliminar un valor en una posición dada\n");
-    printf("Opción: ");
-    scanf("%d", &opcion);
+  insertEnd(&head, 1);
+  insertEnd(&head, 2);
+  insertEnd(&head, 3);
 
-    // Ejecutar operación seleccionada
-    switch(opcion) {
-        case 1: // Sumar todos los valores del conjunto
-            for (i = 0; i < 10; i++) {
-                suma += conjunto[i];
-            }
-            printf("La suma de los valores del conjunto es: %d\n", suma);
-            break;
-        case 2: // Restar el valor de una posición dada
-            printf("Ingrese la posición a restar (0-9): ");
-            scanf("%d", &posicion);
-            if (posicion >= 0 && posicion < 10) {
-                conjunto[posicion]--;
-                printf("El valor de la posición %d es ahora: %d\n", posicion, conjunto[posicion]);
-            } else {
-                printf("La posición ingresada no es válida.\n");
-            }
-            break;
-        case 3: // Añadir un valor en una posición dada
-            printf("Ingrese el valor a agregar: ");
-            scanf("%d", &valor);
-            printf("Ingrese la posición donde agregar el valor (0-9): ");
-            scanf("%d", &posicion);
-            if (posicion >= 0 && posicion < 10) {
-                for (i = 9; i > posicion; i--) {
-                    conjunto[i] = conjunto[i-1];
-                }
-                conjunto[posicion] = valor;
-                printf("El valor %d fue agregado en la posición %d.\n", valor, posicion);
-            } else {
-                printf("La posición ingresada no es válida.\n");
-            }
-            break;
-        case 4: // Eliminar un valor en una posición dada
-            printf("Ingrese la posición a eliminar (0-9): ");
-            scanf("%d", &posicion);
-            if (posicion >= 0 && posicion < 10) {
-                for (i = posicion; i < 9; i++) {
-                    conjunto[i] = conjunto[i+1];
-                }
-                conjunto[9] = 0;
-                printf("El valor en la posición %d fue eliminado.\n", posicion);
-            } else {
-                printf("La posición ingresada no es válida.\n");
-            }
-            break;
-        default: // Opción inválida
-            printf("La opción ingresada no es válida.\n");
-            break;
+  int option, data, key;
+  do {
+    printf("Bienvenido, va a realizar alguna operacion:\n");
+    printf("1. Insertar\n");
+    printf("2. Eliminar\n");
+    printf("3. Mostrar lista\n");
+    printf("4. Salir\n");
+    printf("Ingrese la opcion: ");
+    scanf("%d", &option);
+    switch (option) {
+      case 1:
+        printf("Ingrese el valor a insertar: ");
+        scanf("%d", &data);
+        insertEnd(&head, data);
+        break;
+      case 2:
+        printf("Ingrese el valor a eliminar: ");
+        scanf("%d", &key);
+        deleteNode(&head, key);
+        break;
+      case 3:
+printf("Mostrando la lista:\n");
+  printList(head);
+  break;
+case 4:
+  printf("Gracias por utilizar el programa. ¡Hasta luego!\n");
+  return 0;
+
+default:
+  printf("Opción no válida. Por favor, elija una opción del menú.\n");
+  break;
     }
-
-    return 0;
+  } while (option != 4);
 }
